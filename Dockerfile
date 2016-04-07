@@ -1,5 +1,22 @@
-FROM daocloud.io/php:5.6-cli
+FROM daocloud.io/library/php:5.6.17-fpm
+RUN apt-get update
 
-COPY . /app
-WORKDIR /app
-CMD [ "php", "./hello.php" ]
+RUN apt-get install -y libcurl4-gnutls-dev libpng-dev libmcrypt-dev libsqlite3-dev
+RUN docker-php-ext-install gd mcrypt mbstring json mysql pdo_sqlite pdo_mysql iconv exif
+COPY php.ini /usr/local/etc/php/php.ini
+
+RUN apt-get install -y nginx && rm -rf /var/lib/apt/lists/* && echo "\ndaemon off;" >> /etc/nginx/nginx.conf && chown -R www-data:www-data /var/lib/nginx
+RUN echo "Asia/Shanghai" > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata
+ADD nginx_vhost.conf  /etc/nginx/conf.d/nginx_vhost.conf
+
+VOLUME ["/etc/nginx/sites-enabled", "/etc/nginx/certs", "/etc/nginx/conf.d", "/var/log/nginx"]
+
+COPY . /www
+WORKDIR /www
+
+ADD run.sh /run.sh
+RUN chmod 755 /run.sh
+CMD ["/run.sh"]
+
+EXPOSE 80
+EXPOSE 443
