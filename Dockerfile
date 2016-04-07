@@ -7,7 +7,7 @@ COPY php.ini /usr/local/etc/php/php.ini
 
 RUN apt-get install -y nginx && rm -rf /var/lib/apt/lists/* && echo "\ndaemon off;" >> /etc/nginx/nginx.conf && chown -R www-data:www-data /var/lib/nginx
 RUN echo "Asia/Shanghai" > /etc/timezone && dpkg-reconfigure -f noninteractive tzdata
-ADD nginx_vhost.conf  /etc/nginx/conf.d/nginx_vhost.conf
+COPY nginx_vhost.conf  /etc/nginx/sites-enabled/default
 
 VOLUME ["/etc/nginx/sites-enabled", "/etc/nginx/certs", "/etc/nginx/conf.d", "/var/log/nginx"]
 
