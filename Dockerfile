@@ -3,6 +3,8 @@ RUN apt-get update
 
 RUN apt-get install -y libcurl4-gnutls-dev libpng-dev libmcrypt-dev libsqlite3-dev
 RUN docker-php-ext-install gd mcrypt mbstring json mysql pdo_sqlite pdo_mysql iconv exif
+COPY redis-2.2.7.tgz ~/redis.tgz
+RUN pecl install ~/redis.tgz
 COPY php.ini /usr/local/etc/php/php.ini
 
 RUN apt-get install -y nginx && rm -rf /var/lib/apt/lists/* && echo "\ndaemon off;" >> /etc/nginx/nginx.conf
